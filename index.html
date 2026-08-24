@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Bots — Dashboard do Guia</title>
+<style>
+  :root{
+    --bg:#0a0e16; --bg2:#0f1522; --panel:#121a2b; --panel2:#0c1220;
+    --ink:#e8edf6; --muted:#8b98ad; --dim:#5b6a80;
+    --accent:#4f8cff; --accent2:#7c5cff; --green:#34d399; --amber:#fbbf24;
+    --red:#f87171; --cyan:#22d3ee; --border:#1e2940;
+    --mono:'SF Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding:28px;}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto}
+  /* header */
+  .hero{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:24px}
+  .hero h1{font-size:30px;letter-spacing:-.02em;font-weight:800}
+  .hero .sub{color:var(--muted);margin-top:6px;font-size:15px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--panel)}
+  .tag b{color:var(--cyan);font-weight:600}
+  .hero-right{text-align:right;font-size:13px;color:var(--muted)}
+  .hero-right .big{font-size:22px;font-weight:700;color:var(--accent)}
+  /* stat cards row */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+  /* section headers */
+  h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:1px;background:var(--border)}
+  /* grid cards */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;transition:.15s}
+  .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .card h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .card p{font-size:13px;color:var(--muted)}
+  .card .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);color:var(--ink)}
+  /* two col */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
+  .panel h3{font-size:14px;margin-bottom:12px}
+  ul.clean{list-style:none}
+  ul.clean li{padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:10px;align-items:flex-start}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li .k{font-family:var(--mono);color:var(--cyan);font-size:12px;flex:none;padding-top:1px}
+  ul.clean li .v{color:var(--muted)}
+  .v b{color:var(--ink)}
+  /* role cards */
+  .roles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .role{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+  .role .emoji{font-size:24px;margin-bottom:6px}
+  .role .name{font-size:12px;font-weight:600}
+  .role .desc{font-size:11px;color:var(--muted);margin-top:4px}
+  /* philosophy highlight */
+  .phil{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .phil .item{background:var(--panel2);border-left:3px solid var(--accent);border-radius:8px;padding:14px}
+  .phil .item h4{font-size:13px;margin-bottom:6px}
+  .phil .item p{font-size:12px;color:var(--muted)}
+  /* footer */
+  .foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;color:var(--dim,#5b6a80);font-size:12px;flex-wrap:wrap;gap:10px}
+  .foot .mono{font-family:var(--mono)}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid,.two{grid-template-columns:1fr}.roles{grid-template-columns:repeat(2,1fr)}.phil{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.stats{grid-template-columns:1fr}.roles{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <h1>Hermes Bots <span style="color:var(--accent)">· The Definitive Guide</span></h1>
+      <div class="sub">Dashboard consolidado do guia de @mr_r0b0t — time de bots especialistas persistentes sobre Hermes Agent (Nous Research)</div>
+      <div class="badges">
+        <span class="tag">fonte <b>X/Twitter</b></span>
+        <span class="tag">autor <b>@mr_r0b0t</b></span>
+        <span class="tag">24/08/2026</span>
+        <span class="tag">❤ 189 · 🔁 17</span>
+        <span class="tag">hospedado <b>here.now</b></span>
+      </div>
+    </div>
+    <div class="stat-right" style="text-align:right">
+      <div style="color:var(--muted);font-size:12px">PROPOSTA</div>
+      <div class="big" style="font-size:22px;font-weight:800">time de bots<br>persistentes</div>
+    </div>
+  </header>
+
+  <!-- stats -->
+  <div class="stats">
+    <div class="stat"><div class="n" style="color:var(--green)">5+</div><div class="l">níveis de maturidade<br>(chatbot → autônomo)</div></div>
+    <div class="stat"><div class="n" style="color:var(--accent)">7</div><div class="l">áreas da stack Hermes<br>(memória, skills, cron…)</div></div>
+    <div class="stat"><div class="n" style="color:var(--cyan)">1×</div><div class="l">perfil = 1 bot<br>(~/.hermes/profiles)</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">SOUL.md</div><div class="l">o arquivo mais importante</div></div>
+  </div>
+
+  <!-- core philosophy -->
+  <h2 class="sec">Filosofia central</h2>
+  <div class="phil">
+    <div class="item"><h4 style="color:var(--green)">Papel claro</h4><p>Cada bot tem um papel e um "soul". Especialização compõe: 3–5 bots focados &gt; 20 vagos.</p></div>
+    <div class="item"><h4 style="color:var(--accent)">SOUL.md define tudo</h4><p>Papel, protocolos de comunicação, padrões de qualidade, quando @mencionar outros bots, restrições.</p></div>
+    <div class="item"><h4 style="color:var(--cyan)">Memória compõe</h4><p>memory.md e user.md atualizam a cada interação. Alimente gradualmente — os ganhos acumulam.</p></div>
+    <div class="item"><h4 style="color:var(--amber)">Modelo por bot</h4><p>Pin o modelo certo: barato/rápido p/ pesquisa, raciocínio forte p/ crítica, criativo p/ escrita.</p></div>
+  </div>
+
+  <!-- stack -->
+  <h2 class="sec">Stack de um bot Hermes</h2>
+  <div class="grid">
+    <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>Identidade</h3><p>Bot = um perfil Hermes em <span class="mono" style="font-family:var(--mono)">~/.hermes/profiles/&lt;bot&gt;/</span>. Bot Mode é uma camada de UI sobre esse primitivo.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--cyan)"></span>SOUL.md</h3><p>Personalidade e protocolo. Avatares procedurais (7 formas × 10 cores, olhos piscando), upload ou retrato IA.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--green)"></span>Memória</h3><p>Markdown + SQLite + memória externa opcional. memory.md e user.md atualizam após cada interação.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--amber)"></span>Skills / Tools / MCP</h3><p>Integrações com Gmail, Notion, Calendar, terminal, browser. Não sobrecarregue MCPs — bloat no contexto.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--red)"></span>Cron / Routines</h3><p>Rotinas recorrentes ("resumo da inbox toda manhã", "scan do concorrente 2ª"). Aparecem no histórico e no cron global.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>Delegação</h3><p>Sub-agentes em paralelo, model routing (modelo diferente por tarefa/bot). Combine /background, /steer, /goal, delegate_task.</p></div>
+  </div>
+
+  <!-- roles -->
+  <h2 class="sec">Papéis recomendados do time</h2>
+  <div class="roles">
+    <div class="role"><div class="emoji">🎯</div><div class="name">Coordinator<br>/ Jarvis</div><div class="desc">Orquestrador, planeja e roteia</div></div>
+    <div class="role"><div class="emoji">🔍</div><div class="name">Researcher<br>/ Trencher</div><div class="desc">Pesquisa profunda, análise competitiva</div></div>
+    <div class="role"><div class="emoji">🧨</div><div class="name">Critic<br>/ Red Team</div><div class="desc">Quebra ideias, acha falhas, press-test</div></div>
+    <div class="role"><div class="emoji">⚙️</div><div class="name">Executor<br>/ Coder ou Writer</div><div class="desc">Segundo o caso de uso</div></div>
+    <div class="role"><div class="emoji">🧠</div><div class="name">Memory Keeper</div><div class="desc">Resume, conecta dots, longa escala</div></div>
+  </div>
+
+  <!-- two cols -->
+  <h2 class="sec">Colaboração &amp; Automação</h2>
+  <div class="two">
+    <div class="panel">
+      <h3>Bot-to-bot (a mágica)</h3>
+      <ul class="clean">
+        <li><span class="k">inbox</span><span class="v">Cada bot tem um <b>Agent Inbox</b> persistente.</span></li>
+        <li><span class="k">@</span><span class="v">Digite <b>@ researcher</b> — o bot ativo entrega, espera e traz a resposta.</span></li>
+        <li><span class="k">ex.</span><span class="v">"<b>@ analyst</b> o que acha destes dados?" → processa no próprio contexto e responde.</span></li>
+        <li><span class="k">attr</span><span class="v">Mensagens com atribuição: <span class="mono" style="font-family:var(--mono)">[Message from agent 'researcher']</span>.</span></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Padrões avançados</h3>
+      <ul class="clean">
+        <li><span class="k">orq</span><span class="v">Orquestrador + especialistas: 1 bot-mestre delega a experts.</span></li>
+        <li><span class="k">∥</span><span class="v"><b>Execução paralela</b>: vários bots em ângulos de um problema.</span></li>
+        <li><span class="k">rev</span><span class="v"><b>Loop de revisão</b>: Critic revisa a saída do Writer/Coder.</span></li>
+        <li><span class="k">ob</span><span class="v"><b>Second brain</b>: conecta ao Obsidian p/ bots lerem/escreverem notas.</span></li>
+        <li><span class="k">pc</span><span class="v"><b>Computer Use</b>: cliques/teclado/browser em background.</span></li>
+        <li><span class="k">mix</span><span class="v"><b>Mixture of Agents</b>: modelos leves em muitos bots, fortes p/ decisões-chave.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- starter team -->
+  <h2 class="sec">Time inicial sugerido</h2>
+  <div class="grid">
+    <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>1. Coordinator</h3><p>Orquestrador de alto nível, bom em planejar e rotear o trabalho dos demais bots.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--cyan)"></span>2. Researcher</h3><p>Pesquisa profunda e análise competitiva / tendências.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--red)"></span>3. Critic</h3><p>Red team: quebra ideias, acha falhas, faz pressure test.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--green)"></span>4. Executor</h3><p>Coder ou Writer, conforme o caso de uso.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--amber)"></span>5. Memory Keeper</h3><p>Gerencia conhecimento, resume e conecta pontos no longo prazo.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>Dicas de power user</h3><p>Comece simples; qualidade do <b>SOUL.md</b> decide tudo; roteie modelos agressivamente; paciência nas 1–2 primeiras semanas.</p></div>
+  </div>
+
+  <footer class="foot">
+    <div>Dashboard gerado a partir do guia <b>@mr_r0b0t</b> · Hermes Bots – The Definitive Guide</div>
+    <div class="mono">here.now · x.com/mr_r0b0t/status/2091693711633846351</div>
+  </footer>
+
+</div>
+</body>
+</html>
